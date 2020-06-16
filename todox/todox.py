@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import click
+from tabulate import tabulate
 from todox.data import tododata
 
 @click.group(invoke_without_command=True)
@@ -24,9 +25,16 @@ def add_with_editor():
         content = "".join(content)
         tododata.save_todo(content)
 
+@cli.command(name="list")
 def showtodos():
-    click.echo("Printing todos")
-    pass
+    todos = tododata.get_todos()
+    click.echo(tabulate(todos, headers=["Content"]))
+
+@cli.command()
+@click.argument("id")
+def delete(id):
+    tododata.delete_todo(id)
+    click.echo(f"Todo {id} deleted")
 
 def main():
     cli()
